@@ -46,6 +46,7 @@ public class RazorComponentEndpointsStartup<TRootComponent>
                 {
                     // This disables the reconnection cache, which forces the server to persist the circuit state.
                     options.DisconnectedCircuitMaxRetained = 0;
+                    options.DetailedErrors = true;
                 }
             })
             .AddAuthenticationStateSerialization(options =>
@@ -53,6 +54,11 @@ public class RazorComponentEndpointsStartup<TRootComponent>
                 bool.TryParse(Configuration["SerializeAllClaims"], out var serializeAllClaims);
                 options.SerializeAllClaims = serializeAllClaims;
             });
+
+        if (Configuration.GetValue<bool>("UseHybridCache"))
+        {
+            services.AddHybridCache();
+        }
 
         services.AddScoped<InteractiveWebAssemblyService>();
         services.AddScoped<InteractiveServerService>();
